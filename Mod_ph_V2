@@ -1,0 +1,73 @@
+Option Explicit
+
+Private ch As Selenium.ChromeDriver
+
+Sub Ph()
+    
+    Call DisableStuff
+    
+    ShMain.Range("A1").Value = "Hirdetés címe"
+    ShMain.Range("B1").Value = "Ár"
+    ShMain.Range("C1").Value = "Hely"
+    ShMain.Range("D1").Value = "Link"
+    
+    Dim counter As Long
+    counter = 2
+    
+    Set ch = New Selenium.ChromeDriver
+    
+    Dim MassElements As Selenium.WebElements
+    Dim SingleElement As Selenium.WebElement
+    Dim HirdetesMegnev As Selenium.WebElement
+    Dim HirdetesAr As Selenium.WebElement
+    Dim HirdetesLink As Selenium.WebElement
+    Dim HirdetesHely As Selenium.WebElement
+    
+    With ch
+        .Start
+        .Get "https://hardverapro.hu/index.html"
+        .FindElementByClass("icon-gamepad").Click
+        .FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[1]/div[2]/a").Click
+        .FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[2]/div[2]/a").Click
+        .FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[1]/div/a").Click
+        .FindElementByName("stext").SendKeys ("Playstation 4")
+        .FindElementByName("stext").Submit
+     
+    Set MassElements = .FindElementsByClass("media")
+
+    For Each SingleElement In MassElements
+        If SingleElement.Text Like "*" Then
+            Debug.Print SingleElement.Text
+            Set HirdetesMegnev = SingleElement.FindElementByTag("H1")
+            Set HirdetesAr = SingleElement.FindElementByClass("uad-price")
+            Set HirdetesLink = SingleElement.FindElementByTag("a")
+            Set HirdetesHely = SingleElement.FindElementByClass("uad-light")
+            ShMain.Cells(counter, 1).Value = HirdetesMegnev.Text
+            ShMain.Cells(counter, 2).Value = HirdetesAr.Text
+            ShMain.Cells(counter, 3).Value = HirdetesHely.Text
+            ShMain.Hyperlinks.Add ShMain.Cells(counter, 4), HirdetesLink.Attribute("href")
+            counter = counter + 1
+        End If
+    Next SingleElement
+
+    End With
+
+   Call DisableStuff
+
+End Sub
+
+Private Sub DisableStuff()
+
+Application.ScreenUpdating = False
+Application.DisplayAlerts = False
+Application.EnableEvents = False
+
+End Sub
+
+Private Sub EbableStuff()
+
+Application.ScreenUpdating = True
+Application.DisplayAlerts = True
+Application.EnableEvents = True
+
+End Sub
