@@ -2,7 +2,7 @@ Option Explicit
 Dim counter As Long
     
 Sub TimerScript()
-    
+
     Application.OnTime Now + TimeValue("00:05:00"), "MainAD_Script_OtherRun"
     
 End Sub
@@ -24,6 +24,8 @@ Sub MainAD_Script_OtherRun()
     Call SendMailOtherRun
     
     Call EnableStuff
+    
+    Call TimerScript
     
 End Sub
 
@@ -79,6 +81,7 @@ Private Sub SendMailOtherRun()
     Set olmail = olApp.CreateItem(olMailItem)
     
     If GetDataForMailOtherRun = "<table><tr><td>Hirdetés címe</td><td>Ár</td><td>Hely</td><td>Link</td></tr></table>" Then
+        Debug.Print "No new ads were found."
     Else
         With olmail
             .Subject = "Ads"
@@ -88,7 +91,10 @@ Private Sub SendMailOtherRun()
             '.Display
             .Send
         End With
+        Debug.Print "Mail is sent at " & Now
     End If
+    
+    Debug.Print "Macro finished running at " & Now & vbNewLine
     
     Set olApp = Nothing
     Set olmail = Nothing
