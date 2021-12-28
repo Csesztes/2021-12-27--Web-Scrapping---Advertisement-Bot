@@ -7,6 +7,8 @@ Public Oldrange As Range
     
 Sub MainAD_Script()
     
+    Call DisableStuff
+    
     'Check Web
     Call Ph
     
@@ -16,11 +18,10 @@ Sub MainAD_Script()
     'send mail
     Call SendMail
     
+    Call EnableStuff
 End Sub
 
-Sub Ph()
-    
-    Call DisableStuff
+Public Sub Ph()
     
     Set NewRange = ShMain.Range("A1").CurrentRegion
     Set Oldrange = ShOther.Range("A1").CurrentRegion
@@ -33,8 +34,6 @@ Sub Ph()
     ShMain.Range("C1").Value = "Hely"
     ShMain.Range("D1").Value = "Link"
     ShMain.Range("E1").Value = "Status"
-    
-
     
     Dim counter As Long
     counter = 2
@@ -84,7 +83,6 @@ Sub Ph()
     Set NewRange = Nothing
     Set Oldrange = Nothing
     
-   Call DisableStuff
 End Sub
 
 Private Function GetDataForMailFirstRun() As Variant
@@ -120,8 +118,9 @@ Private Sub SendMail()
         .Subject = "Ads"
         .To = "csontoscsaba19910402@gmail.com"
         .BodyFormat = olFormatHTML
-        .Display
         .HTMLBody = GetDataForMailFirstRun
+        '.Display
+        .Send
     End With
     
     Set olApp = Nothing
@@ -130,7 +129,7 @@ Private Sub SendMail()
 End Sub
 
 
-Private Sub DisableStuff()
+Public Sub DisableStuff()
 
 Application.ScreenUpdating = False
 Application.DisplayAlerts = False
@@ -138,7 +137,7 @@ Application.EnableEvents = False
 
 End Sub
 
-Private Sub EbableStuff()
+Public Sub EnableStuff()
 
 Application.ScreenUpdating = True
 Application.DisplayAlerts = True
