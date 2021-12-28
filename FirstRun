@@ -23,6 +23,8 @@ End Sub
 
 Public Sub Ph()
     
+    Debug.Print "Macro started running at " & Now
+    
     Set NewRange = ShMain.Range("A1").CurrentRegion
     Set Oldrange = ShOther.Range("A1").CurrentRegion
     
@@ -54,8 +56,8 @@ Public Sub Ph()
         .FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[1]/div[2]/a").Click
         .FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[2]/div[2]/a").Click
         .FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[1]/div/a").Click
-        .FindElementByName("stext").SendKeys ("Playstation 4")
-        .FindElementByName("stext").Submit
+        '.FindElementByName("stext").SendKeys ("Playstation 4")
+        '.FindElementByName("stext").Submit
      
     Set MassElements = .FindElementsByClass("media")
 
