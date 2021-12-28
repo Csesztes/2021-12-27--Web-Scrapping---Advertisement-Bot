@@ -1,5 +1,27 @@
 Option Explicit
     
+Sub TimerScript()
+    
+    '... Execute your actions here'
+    alertTime = Now + TimeValue("00:30:00")
+    Application.OnTime alertTime, "MainAD_Script_OtherRun"
+    
+End Sub
+
+
+Sub MainAD_Script_OtherRun()
+    
+    'Check Web
+    Call Ph
+    
+    'Get EmailBody
+    Call GetDataForMailOtherRun
+
+    'send mail with new ads
+    Call SendMailOtherRun
+    
+End Sub
+
 Sub CheckIfExist()
 
     Set NewRange = ShMain.Range("A1").CurrentRegion
@@ -40,7 +62,7 @@ Private Function GetDataForMailOtherRun() As Variant
     
 End Function
 
-Private Sub SendMail()
+Private Sub SendMailOtherRun()
 
     Dim olApp As Outlook.Application
     Dim olmail As Outlook.MailItem
