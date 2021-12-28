@@ -50,12 +50,14 @@ Public Sub Ph()
     Dim HirdetesHely As Selenium.WebElement
     
     With ch
+        .AddArgument "--headless" '-makes chrome run in background
         .Start
-        .Get "https://hardverapro.hu/index.html"
-        .FindElementByClass("icon-gamepad").Click
-        .FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[1]/div[2]/a").Click
-        .FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[2]/div[2]/a").Click
-        .FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[1]/div/a").Click
+        '.Get "https://hardverapro.hu/index.html"
+        .Get "https://hardverapro.hu/aprok/szoftver_jatek/playstation/playstation_4/__konzol_es_tartozekok_tilos_az_account_es_a_masolt_jatek/index.html"
+        '.FindElementByClass("icon-gamepad").Click
+        '.FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[1]/div[2]/a").Click
+        '.FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[2]/div[2]/a").Click
+        '.FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[1]/div/a").Click
         '.FindElementByName("stext").SendKeys ("Playstation 4")
         '.FindElementByName("stext").Submit
      
@@ -129,7 +131,6 @@ Private Sub SendMail()
     Set olmail = Nothing
     
 End Sub
-
 
 Public Sub DisableStuff()
 
