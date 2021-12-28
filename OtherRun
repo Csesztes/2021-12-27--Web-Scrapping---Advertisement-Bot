@@ -1,0 +1,62 @@
+Option Explicit
+    
+Sub CheckIfExist()
+
+    Set NewRange = ShMain.Range("A1").CurrentRegion
+    Set Oldrange = ShOther.Range("A1").CurrentRegion
+    
+    Dim counter As Long
+    counter = 2
+    
+    Do Until ShMain.Range("A" & counter).Value = ""
+        If Oldrange.Find(ShMain.Range("A" & counter)) Is Nothing Then
+            ShMain.Range("E" & counter).Value = "NEW"
+        End If
+     counter = counter + 1
+    Loop
+    
+    Set NewRange = Nothing
+    Set Oldrange = Nothing
+    
+End Sub
+
+Private Function GetDataForMailOtherRun() As Variant
+
+    arr = ShMain.Range("A1").CurrentRegion
+    
+    ShOther.Range("A1").Resize(UBound(arr, 1), UBound(arr, 2)) = arr
+    
+    GetDataForMailOtherRun = "<table><tr>" & GetDataForMailOtherRun
+    
+    Dim r As Long, c As Long
+    For r = LBound(arr, 1) To UBound(arr, 1) Step 1
+        For c = LBound(arr, 2) To UBound(arr, 2) Step 1
+            GetDataForMailOtherRun = GetDataForMailOtherRun & "<td>" & Cells(r, c) & "</td>"
+        Next c
+        GetDataForMailOtherRun = GetDataForMailOtherRun & "</tr>"
+    Next r
+    
+    GetDataForMailOtherRun = GetDataForMailOtherRun & "</tr></table>"
+    
+End Function
+
+Private Sub SendMail()
+
+    Dim olApp As Outlook.Application
+    Dim olmail As Outlook.MailItem
+    
+    Set olApp = New Outlook.Application
+    Set olmail = olApp.CreateItem(olMailItem)
+    
+    With olmail
+        .Subject = "Ads"
+        .To = "csontoscsaba19910402@gmail.com"
+        .BodyFormat = olFormatHTML
+        .Display
+        .HTMLBody = GetDataForMailOtherRun
+    End With
+    
+    Set olApp = Nothing
+    Set olmail = Nothing
+    
+End Sub
