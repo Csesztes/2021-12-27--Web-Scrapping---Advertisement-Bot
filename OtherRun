@@ -25,6 +25,7 @@ Sub MainAD_Script_OtherRun()
     
     Call EnableStuff
     
+    'Repeat
     Call TimerScript
     
 End Sub
