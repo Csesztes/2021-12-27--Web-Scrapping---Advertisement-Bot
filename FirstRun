@@ -1,15 +1,40 @@
 Option Explicit
 
 Private ch As Selenium.ChromeDriver
+Public arr() As Variant
+Public NewRange As Range
+Public Oldrange As Range
+    
+Sub MainAD_Script()
+    
+    'Check Web
+    Call Ph
+    
+    'Get EmailBody
+    Call GetDataForMailFirstRun
+
+    'send mail
+    Call SendMail
+    
+End Sub
 
 Sub Ph()
     
     Call DisableStuff
     
+    Set NewRange = ShMain.Range("A1").CurrentRegion
+    Set Oldrange = ShOther.Range("A1").CurrentRegion
+    
+    NewRange.Copy Oldrange
+    
+    ShMain.UsedRange.Clear
     ShMain.Range("A1").Value = "Hirdetés címe"
     ShMain.Range("B1").Value = "Ár"
     ShMain.Range("C1").Value = "Hely"
     ShMain.Range("D1").Value = "Link"
+    ShMain.Range("E1").Value = "Status"
+    
+
     
     Dim counter As Long
     counter = 2
@@ -37,7 +62,6 @@ Sub Ph()
 
     For Each SingleElement In MassElements
         If SingleElement.Text Like "*" Then
-            Debug.Print SingleElement.Text
             Set HirdetesMegnev = SingleElement.FindElementByTag("H1")
             Set HirdetesAr = SingleElement.FindElementByClass("uad-price")
             Set HirdetesLink = SingleElement.FindElementByTag("a")
@@ -51,10 +75,60 @@ Sub Ph()
     Next SingleElement
 
     End With
-
+    
+    Set ch = Nothing
+    Set HirdetesMegnev = Nothing
+    Set HirdetesAr = Nothing
+    Set HirdetesLink = Nothing
+    Set HirdetesHely = Nothing
+    Set NewRange = Nothing
+    Set Oldrange = Nothing
+    
    Call DisableStuff
-
 End Sub
+
+Private Function GetDataForMailFirstRun() As Variant
+
+    arr = ShMain.Range("A1").CurrentRegion
+    
+    ShOther.Range("A1").Resize(UBound(arr, 1), UBound(arr, 2)) = arr
+    
+    GetDataForMailFirstRun = "<table><tr>" & GetDataForMailFirstRun
+    
+    Dim r As Long, c As Long
+    For r = LBound(arr, 1) To UBound(arr, 1) Step 1
+        For c = LBound(arr, 2) To UBound(arr, 2) Step 1
+            GetDataForMailFirstRun = GetDataForMailFirstRun & "<td>" & Cells(r, c) & "</td>"
+        Next c
+        GetDataForMailFirstRun = GetDataForMailFirstRun & "</tr>"
+    Next r
+    
+    GetDataForMailFirstRun = GetDataForMailFirstRun & "</tr></table>"
+    
+End Function
+
+
+Private Sub SendMail()
+
+    Dim olApp As Outlook.Application
+    Dim olmail As Outlook.MailItem
+    
+    Set olApp = New Outlook.Application
+    Set olmail = olApp.CreateItem(olMailItem)
+    
+    With olmail
+        .Subject = "Ads"
+        .To = "csontoscsaba19910402@gmail.com"
+        .BodyFormat = olFormatHTML
+        .Display
+        .HTMLBody = GetDataForMailFirstRun
+    End With
+    
+    Set olApp = Nothing
+    Set olmail = Nothing
+    
+End Sub
+
 
 Private Sub DisableStuff()
 
