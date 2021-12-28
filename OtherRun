@@ -1,18 +1,21 @@
 Option Explicit
+Dim counter As Long
     
 Sub TimerScript()
     
-    '... Execute your actions here'
-    alertTime = Now + TimeValue("00:30:00")
-    Application.OnTime alertTime, "MainAD_Script_OtherRun"
+    Application.OnTime Now + TimeValue("00:05:00"), "MainAD_Script_OtherRun"
     
 End Sub
 
-
 Sub MainAD_Script_OtherRun()
+
+    Call DisableStuff
     
     'Check Web
     Call Ph
+    
+    'Check new ads
+    Call CheckIfExist
     
     'Get EmailBody
     Call GetDataForMailOtherRun
@@ -20,14 +23,15 @@ Sub MainAD_Script_OtherRun()
     'send mail with new ads
     Call SendMailOtherRun
     
+    Call EnableStuff
+    
 End Sub
 
 Sub CheckIfExist()
 
     Set NewRange = ShMain.Range("A1").CurrentRegion
     Set Oldrange = ShOther.Range("A1").CurrentRegion
-    
-    Dim counter As Long
+
     counter = 2
     
     Do Until ShMain.Range("A" & counter).Value = ""
@@ -43,22 +47,26 @@ Sub CheckIfExist()
 End Sub
 
 Private Function GetDataForMailOtherRun() As Variant
-
-    arr = ShMain.Range("A1").CurrentRegion
     
-    ShOther.Range("A1").Resize(UBound(arr, 1), UBound(arr, 2)) = arr
+    Set NewRange = ShMain.Range("A1").CurrentRegion
+    Set Oldrange = ShOther.Range("A1").CurrentRegion
     
-    GetDataForMailOtherRun = "<table><tr>" & GetDataForMailOtherRun
+    counter = 1
     
-    Dim r As Long, c As Long
-    For r = LBound(arr, 1) To UBound(arr, 1) Step 1
-        For c = LBound(arr, 2) To UBound(arr, 2) Step 1
-            GetDataForMailOtherRun = GetDataForMailOtherRun & "<td>" & Cells(r, c) & "</td>"
-        Next c
-        GetDataForMailOtherRun = GetDataForMailOtherRun & "</tr>"
-    Next r
+    GetDataForMailOtherRun = "<table><tr><td>Hirdetés címe</td><td>Ár</td><td>Hely</td><td>Link</td></tr>" & GetDataForMailOtherRun
     
-    GetDataForMailOtherRun = GetDataForMailOtherRun & "</tr></table>"
+        
+        Do Until ShMain.Range("A" & counter).Value = ""
+            If ShMain.Range("E" & counter).Value = "NEW" Then
+                GetDataForMailOtherRun = GetDataForMailOtherRun & "<td>" & Cells(counter, 1) & "</td>" & "<td>" & Cells(counter, 2) & "</td>" & "<td>" & Cells(counter, 3) & "</td>" & "<td>" & Cells(counter, 4) & "</td></tr>"
+            End If
+        counter = counter + 1
+        Loop
+    
+    GetDataForMailOtherRun = GetDataForMailOtherRun & "</table>"
+    
+    Set NewRange = Nothing
+    Set Oldrange = Nothing
     
 End Function
 
@@ -70,13 +78,17 @@ Private Sub SendMailOtherRun()
     Set olApp = New Outlook.Application
     Set olmail = olApp.CreateItem(olMailItem)
     
-    With olmail
-        .Subject = "Ads"
-        .To = "csontoscsaba19910402@gmail.com"
-        .BodyFormat = olFormatHTML
-        .Display
-        .HTMLBody = GetDataForMailOtherRun
-    End With
+    If GetDataForMailOtherRun = "<table><tr><td>Hirdetés címe</td><td>Ár</td><td>Hely</td><td>Link</td></tr></table>" Then
+    Else
+        With olmail
+            .Subject = "Ads"
+            .To = "csontoscsaba19910402@gmail.com"
+            .BodyFormat = olFormatHTML
+            .HTMLBody = GetDataForMailOtherRun
+            '.Display
+            .Send
+        End With
+    End If
     
     Set olApp = Nothing
     Set olmail = Nothing
