@@ -23,10 +23,15 @@ End Sub
 
 Public Sub Ph()
     
-    Debug.Print "Macro started running at " & Now
+    Debug.Print ThisWorkbook.Name & " started running at " & Now
     
-    Set NewRange = ShMain.Range("A1").CurrentRegion
-    Set Oldrange = ShOther.Range("A1").CurrentRegion
+    Dim ShmainLastrow As Long, ShOtherlastrow As Long
+    
+    ShmainLastrow = ShMain.Range("A" & Rows.Count).End(xlUp).Row
+    ShOtherlastrow = ShOther.Range("A" & Rows.Count).End(xlUp).Row
+
+    Set NewRange = ShMain.Range("A1", "E" & ShmainLastrow)
+    Set Oldrange = ShOther.Range("A1", "E" & ShOtherlastrow)
     
     NewRange.Copy Oldrange
     
@@ -58,7 +63,7 @@ Public Sub Ph()
         '.FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[1]/div[2]/a").Click
         '.FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[2]/div[2]/a").Click
         '.FindElementByXPath("//*[@id=""center""]/div[1]/div/div/div/div[1]/div/a").Click
-        '.FindElementByName("stext").SendKeys ("Playstation 4")
+        '.FindElementByName("stext").SendKeys ("Slim")
         '.FindElementByName("stext").Submit
      
     Set MassElements = .FindElementsByClass("media")
@@ -78,6 +83,9 @@ Public Sub Ph()
     Next SingleElement
 
     End With
+    
+    ShMain.Range("b2:b50").NumberFormat = "General"
+    
     
     Set ch = Nothing
     Set HirdetesMegnev = Nothing
@@ -119,7 +127,7 @@ Private Sub SendMail()
     Set olmail = olApp.CreateItem(olMailItem)
     
     With olmail
-        .Subject = "Ads"
+        .Subject = ThisWorkbook.Name
         .To = "csontoscsaba19910402@gmail.com"
         .BodyFormat = olFormatHTML
         .HTMLBody = GetDataForMailFirstRun
