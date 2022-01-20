@@ -32,8 +32,12 @@ End Sub
 
 Sub CheckIfExist()
 
-    Set NewRange = ShMain.Range("A1").CurrentRegion
-    Set Oldrange = ShOther.Range("A1").CurrentRegion
+    Dim ShmainLastrow As Long, ShOtherlastrow As Long
+    ShmainLastrow = ShMain.Range("A" & Rows.Count).End(xlUp).Row
+    ShOtherlastrow = ShOther.Range("A" & Rows.Count).End(xlUp).Row
+
+    Set NewRange = ShMain.Range("A1", "E" & ShmainLastrow)
+    Set Oldrange = ShOther.Range("A1", "E" & ShOtherlastrow)
 
     counter = 2
     
@@ -85,7 +89,7 @@ Private Sub SendMailOtherRun()
         Debug.Print "No new ads were found."
     Else
         With olmail
-            .Subject = "Ads"
+            .Subject = ThisWorkbook.Name
             .To = "csontoscsaba19910402@gmail.com"
             .BodyFormat = olFormatHTML
             .HTMLBody = GetDataForMailOtherRun
@@ -95,7 +99,7 @@ Private Sub SendMailOtherRun()
         Debug.Print "Mail is sent at " & Now
     End If
     
-    Debug.Print "Macro finished running at " & Now & vbNewLine
+    Debug.Print ThisWorkbook.Name & " finished running at " & Now & vbNewLine
     
     Set olApp = Nothing
     Set olmail = Nothing
